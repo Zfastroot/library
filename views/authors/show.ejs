@@ -1,0 +1,9 @@
+<h1>Author : <%= author.name %></h1>
+<p>My Id : <%= author.id %></p>
+<a href="/authors/<%= author.id %>/edit">Edit</a>
+<%- include('../components/deleteForm.ejs', {url:`/authors/${author.id}`}) %>
+<a href="/authors">Back</a>
+<h2>Books Related to <%= author.name %></h2>
+<% books.forEach(book=>{%>
+    <img height="150" width="100" src="<%= book.coverImagePath %>" alt="book">
+<%}) %>

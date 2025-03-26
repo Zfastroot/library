@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Author = require('../models/author')
+const { cache } = require('ejs')
+const Book =require('../models/books')
+const author = require('../models/author')
 
 //All authors
 router.get('/',async (req,res)=>{
@@ -41,4 +44,83 @@ router.post('/',async (req,res)=>{
     }
 })
 
+router.get('/:id',async (req,res)=>{
+    const author = await Author.findById(req.params.id)
+    const books = await Book.find({author:author.id}).limit(6).exec()
+    try{
+        res.render('authors/show',{
+            author:author,
+            books:books,
+        })
+    }catch{
+
+    } 
+})
+
+router.get('/:id/edit',async(req,res)=>{
+    try{
+        const author = await Author.findById(req.params.id)
+        res.render('authors/edit',{author:author})
+    }catch{
+        res.redirect('/authors')
+    }
+})
+
+router.put('/:id/',async(req,res)=>{
+    let author
+    try{
+        author = await Author.findById(req.params.id)
+        author.name = req.body.name
+        await author.save()
+        res.redirect('/authors')
+    }catch{
+        if(author == null){
+            res.redirect('/')
+        }else{
+            res.render('authors/:id/edit',{
+                author :author,
+                errorMessage:'Error Updating the author'
+            }) 
+        }
+    }
+})
+
+
+
+// router.delete('/:id',async (req,res)=>{
+//     let author
+//     try{
+//         author = await Author.findById(req.params.id)
+//         await Author.deleteOne({ _id: req.params.id })  // Use deleteOne here
+//         res.redirect('/authors')
+        
+//         }catch(err){
+//         if(author == null){
+//             res.redirect('/')
+//         }else{
+//             res.redirect('/authors')
+//             console.log(err)
+//         }
+//     }
+// })
+
+router.delete('/:id', async (req, res) => {
+    let author
+    try {
+        author = await Author.findById(req.params.id)
+        
+        // Check if the author has any books associated
+        const books = await Book.find({ author: author.id })
+        
+        if (books.length > 0) {
+            res.redirect(`/authors?error=This author has books still.`)
+        } else {
+            await Author.deleteOne({ _id: req.params.id }) // Delete author only if no books are related
+            res.redirect('/authors')
+        }
+    } catch (err) {
+        res.redirect('/authors')
+        console.log(err)
+    }
+})
 module.exports = router
