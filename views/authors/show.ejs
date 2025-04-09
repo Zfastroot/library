@@ -6,4 +6,6 @@
 <h2>Books Related to <%= author.name %></h2>
 <% books.forEach(book=>{%>
     <img height="150" width="100" src="<%= book.coverImagePath %>" alt="book">
+    <a href="/books/<%= book.id %>">view</a>
+    <a href="/books/<%= book.id %>/edit">Edit</a>
 <%}) %>

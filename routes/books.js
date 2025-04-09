@@ -56,6 +56,45 @@ router.post('/',async (req,res)=>{
    }
 })
 
+router.get('/:id',async(req,res)=>{
+    const book =await Book.findById(req.params.id)
+    try{
+        res.render('books/show',{
+            book:book
+        })
+    }catch{
+        res.redirect('/books')
+    }
+    
+})
+router.get('/:id/edit',async (req,res)=>{
+    const book = await Book.findById(req.params.id)
+    const authors = await Author.find({})
+    try{ 
+        res.render('books/edit',{
+            book:book,
+            authors:authors
+        })
+    }catch{
+
+    }
+})
+
+router.put('/:id',async (req,res)=>{
+    let book = await Book.findById(req.params.id)
+    const authors = await Author.find({})
+    try{
+        book.title = req.body.title
+        book.author = req.body.author        
+        book.description = req.body.description
+        book.publishDate = new Date(req.body.publishDate)
+        book.pageCount = req.body.pageCount
+        saveCover(book, req.body.cover)
+    }catch(error){
+        console.error(error);  // Log the exact error to the console
+    }
+})
+
 
 async function renderNewPage(res , book , hasError = false){
     try{
