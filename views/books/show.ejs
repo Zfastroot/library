@@ -11,6 +11,6 @@
 </div>
 <div>
     <a href="/books/<%= book.id %>/edit">Edit</a>
-    <a href="/authors/<%= book.author%>/">View</a>
+    <a href="/authors/<%= book.author%>/">View Author</a>
     <%- include('../components/deleteForm.ejs',{url:`/books/${book.id}`}) %>
 </div>

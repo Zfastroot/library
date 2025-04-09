@@ -3,7 +3,6 @@ const router = express.Router()
 const Author = require('../models/author')
 
 const Book = require('../models/books')
-const path = require('path')
 const imageMimeTypes = ['image/png','image/jpeg','image/jpg','image/gif']
 
 
@@ -92,6 +91,16 @@ router.put('/:id',async (req,res)=>{
         saveCover(book, req.body.cover)
     }catch(error){
         console.error(error);  // Log the exact error to the console
+    }
+})
+
+router.delete('/:id',async(req,res)=>{
+    try {
+        await Book.deleteOne({_id:req.params.id})
+        res.redirect('/books')
+    } catch (error) {
+        console.log(error)
+        res.redirect('/books')
     }
 })
 
